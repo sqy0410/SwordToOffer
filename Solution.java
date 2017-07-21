@@ -23,11 +23,13 @@ public class Solution {
 	    	System.out.println(ss.replaceSpace(str));
 
 	    	int[] pre= new int[7];
-	    	int[] in={4,8,6,12,16,14,10};
+	    	int[] in={3334,3,3333332};
+	    	int[] out = new int[3];
+	    	//System.arraycopy(in, 2, out, 0, 3);
+	    	//for(int i=0;i<out.length;i++)System.out.println(out[i]+"------test system.arraycopy");
 	    	for(int i=0;i<7;i++)pre[i]=i+1;
 	    	
-	    	System.out.println(ss.NumberOf1(-1));
-	    	ss.reOrderArray(in);
+	    	//System.out.println("------"+ss.GetLeastNumbers_Solution(in, 4));
 //	    	for(int re=0;re<in.length;re++){
 //	        	System.out.println(in[re]);}
 	    	ArrayList<Integer> arr = new ArrayList<Integer>();
@@ -35,20 +37,39 @@ public class Solution {
 	    	ss.push(3);
 	    	System.out.println(ss.VerifySquenceOfBST(in));
 	    	
-	    	TreeNode tr = new TreeNode(10);
-//	    	tr.left =new TreeNode(5);
-//	    	tr.right=new TreeNode(12);
-//	    	tr.right.left=null;
-//	    	tr.right.right=null;
+//	    	TreeNode tr = new TreeNode(10);
+//	    	tr.left =new TreeNode(6);
+//	    	tr.right=new TreeNode(14);
 //	    	tr.left.left=new TreeNode(4);
-//	    	tr.left.left.right=null;
+//	    	tr.left.right=new TreeNode(8);
+//	    	tr.right.left=new TreeNode(12);
+//	    	tr.right.right=new TreeNode(16);
 //	    	tr.left.left.left=null;
-//	    	tr.left.right=new TreeNode(7);
+//	    	tr.left.left.right=null;
 //	    	tr.left.right.left=null;
 //	    	tr.left.right.right=null;
+//	    	tr.right.left.left=null;
+//	    	tr.right.left.right=null;
+//	    	tr.right.right.left=null;
+//	    	tr.right.right.right=null;
+	    	
+	    	TreeNode tr = new TreeNode(5);
+	    	tr.left =new TreeNode(4);
+	    	tr.right=null;
+	    	tr.left.left=new TreeNode(3);
+	    	tr.left.right=null;
+	    	tr.left.left.left=new TreeNode(2);
+	    	tr.left.left.right=null;
+	    	tr.left.left.left.left=new TreeNode(1);
+	    	tr.left.left.left.right=null;
 
-	    	System.out.println(ss.FindPath(tr, 10));
-
+	    	TreeNode trr = ss.Convert(tr);
+	    	while(tr.left!=null){
+	    		//System.out.println(tr.val);
+	    		tr=tr.left;
+	    	}
+	    	String strr = new String("aa");
+	    	System.out.println("--------final="+ss.PrintMinNumber(in));
 	    	
 	   }
 	   
@@ -60,13 +81,302 @@ public class Solution {
 	   
 	   
 	   
+//*****************************把数组排成最小的数**********************************	   
+	   public String PrintMinNumber(int [] numbers) {
+		   ArrayList<String> arrayNum = new ArrayList<String>();
+		   int i=0, total=0, j=0, flag = 0, maxlen=0, loop=0;
+		   for(i=0; i<numbers.length;i++){
+			   String temp = String.valueOf(numbers[i]);
+			   arrayNum.add(temp);
+			   total =total+temp.length();
+			   if(maxlen<temp.length())maxlen=temp.length();
+		   }
+		   StringBuilder resultArray = new StringBuilder();
+		   while(arrayNum.isEmpty()!=true){
+			   char temp = '9';
+			   int tempi = arrayNum.size();
+			   for(loop =0;loop<maxlen;loop++){
+			   for(i=0;i<arrayNum.size();i++){
+				   int index = Math.min(loop, arrayNum.get(i).length()-1);
+				   if(arrayNum.get(i).charAt(index)<temp){
+					   temp = arrayNum.get(i).charAt(index);
+					   tempi =i; flag=1;
+				   }else if(arrayNum.get(i).charAt(index)==temp){
+					   flag=0;tempi =i;
+				   }
+			   }
+			   if (flag==1)break;
+			   }
+			   resultArray.append(arrayNum.get(tempi));
+			   arrayNum.remove(tempi);
+		   }		   
+		   String str = String.valueOf(resultArray.toString().toCharArray());
+		   return str;
+	    }
 	   
+//*************************整数中1出现的次数（从1到n整数中1出现的次数）*******************************************	  
+	   //根据规律，或者直接n每次减一String str = String.valueOf(n);查1的个数
+	   public int NumberOf1Between1AndN_Solution(int n) {
+		    int total = 0, tempn=n,i=0,tempsum=1,base=1;
+		    if(n==0)return 0;
+		    if(n<10)return 1;
+		    if(n==10)return 2;
+		    if(n<20)return(n-10+3);
+		    tempn=n;	
+		    while(tempn>10){//用String.valueOf(tempn)直接转化为字符串，获取n的位数，免得一直除10又麻烦又乱，又易错
+		    	String str = String.valueOf(tempn);
+		    	base=1;tempsum=1;
+		    	if(str.charAt(0)=='1'){//若最高位为1，要特殊考虑
+		    		for(i=0;i<str.length()-2;i++){
+		    			 base=base*10;
+		                tempsum =base+tempsum*10;
+		    		}
+		    		int a=(int)Math.pow(10, str.length()-1);		    		
+		    		tempn=tempn-a;//去掉最高位，求剩余数中1的个数
+		    		total=total+tempsum+tempn+1;
+		    	}else{//若最高位不为1，根据规律算2000，3000这样的数包含的1的个数
+		    		for(i=0;i<str.length()-2;i++){
+		    			 base=base*10;
+		                tempsum =base+tempsum*10;
+		    		}
+		    		int a=(int)Math.pow(10, str.length()-1);
+		    		tempsum = base*10+tempsum*(tempn/a);		    		
+		    		tempn=tempn-a*(tempn/a);//去掉最高位，求剩余数中1的个数
+		    		total=total+tempsum;			    		
+		    	}
+		    }
+		    System.out.println("-----"+tempn);
+		    if(tempn==10)total=total+2;
+		    if(tempn<10 && tempn>0)total=total+1;
+		    return total;
+	    }
 	   
-//******************************复杂链表的复制********************************	   
+//*********************连续子数组的最大和***********************************************	   
+	    public int FindGreatestSumOfSubArray(int[] array) {
+	    	if (array.length==0)return 0;
+	        int totalsum=0, localsum=0, tempsum=0, i=0, j=0, max=array[0];
+	        for(i=0;i<array.length;i++)
+	        	if(array[i]>max)max=array[i];
+	        if(max <= 0)return max;
+	        for(i=0; i<array.length; i++){
+	        	if(array[i]>0){
+	        		localsum=0;
+	        		tempsum=0;
+	        		for(j=i;j<array.length;j++){
+	        			if(array[j]>0 && tempsum==0)localsum = localsum+array[j];
+	        			else if(tempsum<0 || array[j]<0){
+	        				tempsum=tempsum+array[j];
+	        				if(tempsum>0){
+	        					localsum=localsum+tempsum;
+	        					tempsum=0;
+	        				}
+	        			}
+	        		}
+	        		if(localsum>totalsum )totalsum=localsum;
+	        	}	        	
+	        }
+	        return totalsum;
+	    }
+	   
+//***********************最小的K个数***************************************************	   
+	    //堆排序的思想，或直接用Arrays.sort
+	    public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
+	    	ArrayList<Integer> array = new ArrayList<Integer>();
+	    	if(input.length<k ||k==0)return array;
+	    	int i=0;
+	    	//Arrays.sort(input);
+	    	//for(i=0; i<k; i++)array.add(input[i]);
+	    	int [] arraytem = new int[k];
+	    	for(i=0;i<k;i++)arraytem[i] = input[i];
+	    	//max heap
+	    	for(i=1;i<k;i++){
+	    		int j=i;
+	    		while((int)(Math.floor((j-1)/2))>=0){
+	    			int father  = (int)(Math.floor((j-1)/2));
+	    			if(arraytem[father]<arraytem[j]){
+	    				int temp=arraytem[father];
+	    				arraytem[father]=arraytem[j];
+	    				arraytem[j]=temp;
+	    			}
+	    			if(father==0)break;
+	    			j=father;
+	    		}
+	    	}
+	    	for(i=k;i<input.length;i++){
+	    		if(input[i]<arraytem[0])HeapReplace(input[i],arraytem);
+	    	}
+	    	for(i=0;i<k;i++)array.add(arraytem[i]);
+	    	return array;	        
+	    }
+	    public void HeapReplace(int replace, int [] array) {
+	    	//heap sort
+	    	array[0]=replace;
+	    	int left=0, right=0, i=0;
+	    	while(2*i+1<array.length){
+	    		System.out.println("---2---");
+	    		left=array[2*i+1];
+	    		if(2*i+2<array.length)right=array[2*i+2];
+	    		else right=array[2*i+1];
+	    		if(left>array[i] && left>=right){
+	    			int temp=left; 
+	    			array[2*i+1] = array[i];
+	    			array[i]=temp;
+	    			i=2*i+1;
+	    		}else if(right > array[i] && right > left){
+	    			int temp=right; 
+	    			array[2*i+2] = array[i];
+	    			array[i]=temp;
+	    			i=2*i+2;
+	    		} else break;
+	    	}
+	    }
+	   
+//*************************数组中出现次数超过一半的数字*******************************	
+	    //出现超过一半的数的总个数大于其他所有元素的个数和
+	    public int MoreThanHalfNum_Solution(int [] array) {
+	    	if (array.length==0)return 0;
+	        int i=0, temp=array[0],num=1;
+	        for(i=1;i<array.length;i++){
+	        	if(array[i]==temp)num++;
+	        	else if(num==0){
+	        		temp = array[i];num=1;
+	        	}else if(num>0)num--;
+	        }
+	        if(num==0)return 0;
+	        num=0;
+	        for(i=0;i<array.length;i++){
+	        	if (array[i]==temp)num++;
+	        }
+	        if(num>(array.length-1)/2)return temp;
+	        else return 0;
+	    }
+	   
+//**********************字符串的排列******************************************	   
+	    public ArrayList<String> Permutation(String str) {
+	    	ArrayList<String> array = new ArrayList<String>();
+	    	char[] src = str.toCharArray();
+	    	char[] temp = new char[str.length()];
+	    	for(int i=0;i<str.length(); i++){
+	    		if(i!=0 && src[0]==src[i]){
+	    		}else{
+	    		char tempp=src[0];
+	    		src[0] = src[i];
+	    		src[i]=tempp;
+	    		Traverse(src, 0, temp, array);
+	    		char temppp=src[0];
+	    		src[0] = src[i];
+	    		src[i]=temppp;
+	    		}
+	    	}
+	        return array;
+	    }
+	    public void Traverse(char[] src, int srci, char[] dst, ArrayList<String> array) {
+	    	System.out.println("--sqy1--dsti="+srci);//+dst[srci]+"srci="+src[srci]
+	    	dst[srci]=src[srci];	
+	    	srci=srci+1;
+	    	if(src.length>srci){	    		
+	    		for(int i=srci;i<src.length; i++){
+	    			if(srci!=i && src[srci]==src[i]){
+	    			}else{
+	    			char tempp=src[srci];
+		    		src[srci] = src[i];
+		    		src[i]=tempp;
+		    		Traverse(src, srci, dst, array);
+		    		char temppp=src[srci];
+		    		src[srci] = src[i];
+		    		src[i]=temppp;
+	    			}
+		    	}
+	    	}
+	    	else{
+	    		String str = new String(dst);
+	    		array.add(str);
+	    	}	    		    	
+	    }
+	    
+//*******************************二叉搜索树与双向链表*******************************	
+	   //也可以利用栈实现屏蔽部分，中序遍历
+	   public TreeNode Convert(TreeNode root) {
+	    	if (root == null)return null;
+	    	if(root.left == null && root.right == null) return root;
+	    	TreeNode left=Convert(root.left);
+	    	if(left!=null){
+	    		while(left.right!=null)left=left.right;
+	    		left.right=root;
+	    		root.left=left;
+	    	}	    	
+	    	TreeNode right=Convert(root.right);
+	    	if(right!=null){
+	    		while(right.left!=null)right=right.left;
+	    		right.left=root;
+	    		root.right=right;
+	    	}   		    	
+	    	while(root.left!=null)root=root.left;
+	    	return  root;      
+	    }
+//方法2：
+//	   public static TreeNode increase= null;
+//	   public TreeNode Convert(TreeNode pRootOfTree) {
+//	    	if (pRootOfTree == null)return null;
+//	    	if(pRootOfTree.left == null && pRootOfTree.right == null) return pRootOfTree;
+//	    	Reverse(pRootOfTree);	    	
+//	    	while(pRootOfTree.left!=null){
+//	    		pRootOfTree=pRootOfTree.left;
+//	    	}
+//	    	
+//	    	return  pRootOfTree;
+//       
+//	    }
+//	    public void Reverse(TreeNode pRootOfTree) {
+//	    	if (pRootOfTree!=null){
+//	    		if(pRootOfTree.left!=null){
+//	    			Reverse(pRootOfTree.left);
+//	    		}
+//	    		if(increase==null){
+//	    			increase=pRootOfTree;
+//	    		}
+//	    		else{
+//	    			increase.right =pRootOfTree;
+//	    			pRootOfTree.left=increase;
+//	    			increase=increase.right;
+//	    		}	    		
+//	    		if(pRootOfTree.right!=null){
+//	    			Reverse(pRootOfTree.right);
+//	    		}
+//	    	} 
+//	    }
+	   
+//******************************复杂链表的复制********************************	
+	   //将复杂链表的每个节点复制一个作为下一跳，再添加随机指针，再把新链表抽取出来
 	    public RandomListNode Clone(RandomListNode pHead)
 	    {
-	    	
-	        
+	    	if (pHead ==null)return null;
+	    	RandomListNode newHead = pHead;
+	    	RandomListNode newHeadre = pHead;
+	    	RandomListNode node = new RandomListNode(newHead.label);
+	    	while(newHead!=null){
+	    		node=newHead.next;
+	    		newHead.next=new RandomListNode(newHead.label);
+	    		newHead.next.next=node;
+	    		newHead=newHead.next.next;
+	    	}
+	    	newHead=pHead;
+	    	while(newHead!=null){
+	    		if(newHead.random!=null&&newHead.random.next!=null)newHead.next.random=newHead.random.next;
+	    		newHead=newHead.next.next;
+	    	}
+	    	newHead=pHead;
+	    	node=newHead.next;
+	    	newHeadre=node;
+	    	while(newHead.next.next!=null){
+	    		newHead.next=newHead.next.next;
+	    		newHead=newHead.next;
+	    		node.next=node.next.next;
+	    		node=node.next;
+	    	}
+	    	newHead.next=null;
+	    	node.next=null;
+	    	return newHeadre;
 	    }
 	   
 //**************************二叉树中和为某一值的路径***********************************************	
@@ -444,7 +754,7 @@ public class Solution {
 	    	if(num==33)num=1;
 	    	return num;
 	    }
-	   
+
 //**********************矩形覆盖****************************************	   
 	    public int RectCover(int target) {
 	    	if (target==0)return 0;
